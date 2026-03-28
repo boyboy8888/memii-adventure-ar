@@ -28,22 +28,27 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <a-entity mindar-image-target="targetIndex: 0">
+        <a-entity mindar-image-target="targetIndex: 5"> 
             <a-video src="#vid1" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 1">
+
+        <a-entity mindar-image-target="targetIndex: 4">
             <a-video src="#vid2" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 2">
+
+        <a-entity mindar-image-target="targetIndex: 3">
             <a-video src="#vid3" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 3">
+
+        <a-entity mindar-image-target="targetIndex: 2">
             <a-video src="#vid4" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 4">
+
+        <a-entity mindar-image-target="targetIndex: 1">
             <a-video src="#vid5" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 5">
+
+        <a-entity mindar-image-target="targetIndex: 0">
             <a-video src="#vid6" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
        
@@ -52,12 +57,14 @@
     <script>
         const startButton = document.querySelector('#start-button');
         const sceneEl = document.querySelector('a-scene');
-        const vids = [document.querySelector('#vid1'),
-                      document.querySelector('#vid2'),
-                      document.querySelector('#vid3'),
-                      document.querySelector('#vid4'),
-                      document.querySelector('#vid5'),
-                      document.querySelector('#vid6')];
+        const vids = [
+            document.querySelector('#vid1'), // index 0
+            document.querySelector('#vid2'), // index 1
+            document.querySelector('#vid3'), // index 2
+            document.querySelector('#vid4'), // index 3
+            document.querySelector('#vid5'), // index 4
+            document.querySelector('#vid6')  // index 5
+        ];
 
         // 1. ทริคแก้ปัญหา Android/iPhone: ต้องสั่งเล่นวิดีโอทันทีที่มีการคลิกปุ่ม
         startButton.addEventListener('click', () => {
