@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <button id="start-button">แตะเพื่อเริ่มดู AR</button>
+    <button id="start-button">แตะเพื่อเริ่มดู AR (Android Support)</button>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-assets>
@@ -27,43 +27,58 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0">
-            <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+            <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
-
         <a-entity mindar-image-target="targetIndex: 1">
-            <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+            <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
-
         <a-entity mindar-image-target="targetIndex: 2">
-            <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+            <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
-    </a-scene> <script>
+    </a-scene>
+
+    <script>
         const startButton = document.querySelector('#start-button');
         const sceneEl = document.querySelector('a-scene');
+        const vids = ["#vid1", "#vid2", "#vid3"];
 
         startButton.addEventListener('click', () => {
-            // เริ่มระบบ AR และสั่ง Play วิดีโอทั้งหมดแบบ Muted ทิ้งไว้ก่อน
-            sceneEl.systems["mindar-image-system"].start();
-            const allVideos = document.querySelectorAll('video');
-            allVideos.forEach(v => {
-                v.play().then(() => {
-                    v.pause(); // สั่งหยุดไว้ก่อนเพื่อให้พร้อมทำงานตอนสแกนเจอ
-                }).catch(e => console.log("Video setup error:", e));
+            // 1. เริ่มระบบ AR (ขอสิทธิ์กล้อง)
+            const arSystem = sceneEl.systems["mindar-image-system"];
+            if (arSystem) {
+                arSystem.start(); 
+            }
+
+            // 2. ปลดล็อกวิดีโอ (Android บังคับให้ต้อง Play ก่อนหนึ่งครั้ง)
+            vids.forEach(id => {
+                const v = document.querySelector(id);
+                if (v) {
+                    v.play().then(() => {
+                        v.pause(); // เล่นแล้วหยุดทันทีเพื่อรอสแกน
+                    }).catch(err => console.log("Unlock error:", err));
+                }
             });
+
             startButton.style.display = 'none';
         });
 
+        // 3. ควบคุมการเล่นเมื่อสแกนติด
         sceneEl.addEventListener("targetFound", event => {
             const index = event.detail.index;
-            const vids = ["#vid1", "#vid2", "#vid3"];
             const currentVideo = document.querySelector(vids[index]);
             if (currentVideo) {
-                currentVideo.muted = false; 
+                currentVideo.muted = false; // เปิดเสียง
                 currentVideo.play();
             }
         });
 
         sceneEl.addEventListener("targetLost", event => {
             const index = event.detail.index;
-            const vids = ["#vid1", "#vid2", "#vid3"];
-            const currentVideo = document.querySelector(vids[index
+            const currentVideo = document.querySelector(vids[index]);
+            if (currentVideo) {
+                currentVideo.pause();
+            }
+        });
+    </script>
+</body>
+</html>
