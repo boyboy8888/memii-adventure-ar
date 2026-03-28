@@ -28,4 +28,60 @@
 
         <a-entity mindar-image-target="targetIndex: 0">
             <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0"></a-video>
-        </
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 1">
+            <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0"></a-video>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 2">
+            <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0"></a-video>
+        </a-entity>
+    </a-scene>
+
+    <script>
+        const startButton = document.querySelector('#start-button');
+        const sceneEl = document.querySelector('a-scene');
+        const vids = ["#vid1", "#vid2", "#vid3"];
+
+        startButton.addEventListener('click', () => {
+            // เริ่มระบบ AR
+            sceneEl.systems["mindar-image-system"].start(); 
+
+            // ปลดล็อกวิดีโอทุกตัว (Play แล้ว Pause ทันที)
+            vids.forEach(id => {
+                const v = document.querySelector(id);
+                if (v) {
+                    v.play().then(() => {
+                        v.pause();
+                        v.currentTime = 0;
+                    }).catch(e => console.log("Unlock error:", e));
+                }
+            });
+            startButton.style.display = 'none';
+        });
+
+        sceneEl.addEventListener("targetFound", event => {
+            const index = event.detail.index;
+            const currentVideo = document.querySelector(vids[index]);
+            if (currentVideo) {
+                // บังคับ Muted อีกครั้งเพื่อให้มั่นใจว่าเล่นแน่นอน
+                currentVideo.muted = true; 
+                currentVideo.play().catch(e => {
+                    console.log("Play error:", e);
+                    // ถ้ายังไม่เล่น ให้ลองแตะหน้าจอเพื่อ Play
+                });
+                
+                // ลองเปิดเสียงหลังจาก Play ไปแล้ว 1 วินาที (บางเครื่องยอม)
+                setTimeout(() => { currentVideo.muted = false; }, 1000);
+            }
+        });
+
+        sceneEl.addEventListener("targetLost", event => {
+            const index = event.detail.index;
+            const currentVideo = document.querySelector(vids[index]);
+            if (currentVideo) {
+                currentVideo.pause();
+            }
+        });
+    </script>
+</body>
+</html>
