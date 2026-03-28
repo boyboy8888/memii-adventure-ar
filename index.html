@@ -11,17 +11,10 @@
             z-index: 9999; padding: 20px 40px; background: #FF6B6B; color: white;
             border: none; border-radius: 50px; font-size: 18px; font-weight: bold;
         }
-        /* ข้อความแจ้งเตือนเล็กๆ ถ้าวิดีโอไม่เล่น */
-        #instruction {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 9998; color: white; background: rgba(0,0,0,0.5); padding: 5px 15px;
-            border-radius: 10px; display: none; font-family: sans-serif;
-        }
     </style>
 </head>
 <body>
-    <button id="start-button">เริ่มโปรเจกต์ Memii Adventure</button>
-    <div id="instruction">สแกนติดแล้ว "แตะหน้าจอ 1 ครั้ง" เพื่อเล่นวิดีโอ</div>
+    <button id="start-button">เริ่มดู Memii Adventure</button>
 
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-assets>
@@ -32,13 +25,13 @@
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
-        <a-entity id="ent1" mindar-image-target="targetIndex: 0">
+        <a-entity mindar-image-target="targetIndex: 0">
             <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity id="ent2" mindar-image-target="targetIndex: 1">
+        <a-entity mindar-image-target="targetIndex: 1">
             <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity id="ent3" mindar-image-target="targetIndex: 2">
+        <a-entity mindar-image-target="targetIndex: 2">
             <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0"></a-video>
         </a-entity>
     </a-scene>
@@ -46,39 +39,32 @@
     <script>
         const startButton = document.querySelector('#start-button');
         const sceneEl = document.querySelector('a-scene');
-        const instruction = document.querySelector('#instruction');
         const vids = [document.querySelector('#vid1'), document.querySelector('#vid2'), document.querySelector('#vid3')];
 
+        // 1. ทริคแก้ปัญหา Android/iPhone: ต้องสั่งเล่นวิดีโอทันทีที่มีการคลิกปุ่ม
         startButton.addEventListener('click', () => {
             sceneEl.systems["mindar-image-system"].start();
-            // บังคับ Play และ Pause ทันทีเพื่อ "ปลุก" วิดีโอทุกตัว
-            vids.forEach(v => { v.play().then(() => v.pause()); });
+            vids.forEach(v => {
+                if(v) {
+                    v.play(); // สั่งรันวิดีโอไปเลยตั้งแต่ตอนกดปุ่ม (แบบ Muted)
+                }
+            });
             startButton.style.display = 'none';
-            instruction.style.display = 'block';
         });
 
-        // เมื่อสแกนเจอ
+        // 2. เมื่อสแกนเจอ ให้เปิดเสียง (ถ้าต้องการ)
         sceneEl.addEventListener("targetFound", event => {
             const index = event.detail.index;
             if (vids[index]) {
-                vids[index].muted = true; // Android ชอบแบบไม่มีเสียงก่อน
-                vids[index].play();
-                // พยายามเปิดเสียงหลังจากเล่นไปแล้วครึ่งวินาที
-                setTimeout(() => { vids[index].muted = false; }, 500);
+                vids[index].muted = false; // ปลดล็อกเสียงเมื่อสแกนติด
+                vids[index].play(); // ย้ำคำสั่งเล่นอีกครั้ง
             }
         });
 
-        // เมื่อสแกนหลุด
+        // 3. เมื่อสแกนหลุด ให้หยุด
         sceneEl.addEventListener("targetLost", event => {
             const index = event.detail.index;
             if (vids[index]) vids[index].pause();
-        });
-
-        // "ไม้ตาย": ถ้าสแกนติดแต่ไม่ขยับ ให้ผู้ใช้แตะหน้าจอเพื่อบังคับ Play
-        window.addEventListener('click', () => {
-            vids.forEach(v => {
-                if (v.paused && !startButton.style.display === 'none') v.play();
-            });
         });
     </script>
 </body>
