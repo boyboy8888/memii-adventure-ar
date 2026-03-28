@@ -5,10 +5,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     <style>
-      body { margin: 0; overflow: hidden; }
-    </style>
+  #start-button {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    z-index: 9999; padding: 15px 30px; background: #FF6B6B; color: white;
+    border: none; border-radius: 25px; font-family: sans-serif; font-weight: bold;
+  }
+</style>
   </head>
   <body>
+    <button id="start-button">เริ่มดู Memii Adventure</button>
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: yes; uiScanning: yes;" 
              color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" 
              vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
@@ -61,5 +66,16 @@
           videos.forEach(v => v.play().then(() => v.pause()));
       });
     </script>
-  </body>
+  
+  <script>
+  const startButton = document.querySelector('#start-button');
+  const video0 = document.querySelector('#vid0'); // เพิ่มให้ครบทุกตัว vid0, vid1, vid2...
+
+  startButton.addEventListener('click', () => {
+    // ปลดล็อกวิดีโอทั้งหมด
+    video0.play(); video0.pause(); 
+    // ถ้ามีตัวอื่นก็ใส่เพิ่มตรงนี้ครับ
+    startButton.style.display = 'none'; // กดแล้วซ่อนปุ่ม
+  });
+</script></body>
 </html>
