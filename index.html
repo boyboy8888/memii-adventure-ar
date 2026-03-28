@@ -27,35 +27,43 @@
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
         <a-entity mindar-image-target="targetIndex: 0">
-  <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
-</a-entity>
+            <a-video src="#vid1" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+        </a-entity>
 
-<a-entity mindar-image-target="targetIndex: 1">
-  <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
-</a-entity>
+        <a-entity mindar-image-target="targetIndex: 1">
+            <a-video src="#vid2" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+        </a-entity>
 
-<a-entity mindar-image-target="targetIndex: 2">
-  <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
-</a-entity>
-
-    <script>
+        <a-entity mindar-image-target="targetIndex: 2">
+            <a-video src="#vid3" width="0.63" height="1.12" position="0 0 0" rotation="0 0 0"></a-video>
+        </a-entity>
+    </a-scene> <script>
         const startButton = document.querySelector('#start-button');
         const sceneEl = document.querySelector('a-scene');
 
         startButton.addEventListener('click', () => {
-            // เริ่มระบบ AR และเล่นวิดีโอทั้งหมดแบบ Muted เพื่อปลดล็อก Browser
+            // เริ่มระบบ AR และสั่ง Play วิดีโอทั้งหมดแบบ Muted ทิ้งไว้ก่อน
             sceneEl.systems["mindar-image-system"].start();
-            document.querySelectorAll('video').forEach(v => v.play());
+            const allVideos = document.querySelectorAll('video');
+            allVideos.forEach(v => {
+                v.play().then(() => {
+                    v.pause(); // สั่งหยุดไว้ก่อนเพื่อให้พร้อมทำงานตอนสแกนเจอ
+                }).catch(e => console.log("Video setup error:", e));
+            });
             startButton.style.display = 'none';
         });
 
-        // เมื่อสแกนเจอภาพ ให้เปิดเสียง
         sceneEl.addEventListener("targetFound", event => {
             const index = event.detail.index;
             const vids = ["#vid1", "#vid2", "#vid3"];
             const currentVideo = document.querySelector(vids[index]);
-            if (currentVideo) currentVideo.muted = false; 
+            if (currentVideo) {
+                currentVideo.muted = false; 
+                currentVideo.play();
+            }
         });
-    </script>
-</body>
-</html>
+
+        sceneEl.addEventListener("targetLost", event => {
+            const index = event.detail.index;
+            const vids = ["#vid1", "#vid2", "#vid3"];
+            const currentVideo = document.querySelector(vids[index
