@@ -22,6 +22,8 @@
             <video id="vid2" src="./vdo2.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
             <video id="vid3" src="./vdo3.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
             <video id="vid4" src="./vdo4.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
+            <video id="vid5" src="./vdo5.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
+            <video id="vid6" src="./vdo6.mp4" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
         </a-assets>
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
@@ -35,9 +37,16 @@
         <a-entity mindar-image-target="targetIndex: 2">
             <a-video src="#vid3" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
-        <a-entity mindar-image-target="targetIndex: 2">
+        <a-entity mindar-image-target="targetIndex: 3">
             <a-video src="#vid4" width="1.12" height="2" position="0 0 0"></a-video>
         </a-entity>
+        <a-entity mindar-image-target="targetIndex: 4">
+            <a-video src="#vid5" width="1.12" height="2" position="0 0 0"></a-video>
+        </a-entity>
+        <a-entity mindar-image-target="targetIndex: 5">
+            <a-video src="#vid6" width="1.12" height="2" position="0 0 0"></a-video>
+        </a-entity>
+       
     </a-scene>
 
     <script>
@@ -46,7 +55,9 @@
         const vids = [document.querySelector('#vid1'),
                       document.querySelector('#vid2'),
                       document.querySelector('#vid3'),
-                      document.querySelector('#vid4')];
+                      document.querySelector('#vid4'),
+                      document.querySelector('#vid5'),
+                      document.querySelector('#vid6')];
 
         // 1. ทริคแก้ปัญหา Android/iPhone: ต้องสั่งเล่นวิดีโอทันทีที่มีการคลิกปุ่ม
         startButton.addEventListener('click', () => {
